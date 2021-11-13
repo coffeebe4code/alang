@@ -1,3 +1,13 @@
+# Custom
+.ccls
+target
+obj
+.d
+lib
+include
+*.swp
+
+
 # Prerequisites
 *.d
 
