@@ -1,0 +1,18 @@
+program => ( num )* EOF
+num => digit+ ( "." DIGIT+ )? | string
+string => """ <any character or escpaed char>* """ | ident
+ident => ALPHA <except _>+ (ALPHA | DIGIT)*
+un_op => ( "!" | neg | dup | pop ) | num
+bin_op => ( "+" | "-" | "/" | "%" | "*" | "^" | ">>" | "<<" | "|" | "&" | nip | swap ) | un_op
+
+func =>  "(" args? ") | obj
+obj => "{" args? "}" | array
+array => [ top? ( "," top)* ] | lambda
+lambda => #???# | triple
+
+triple => ( rot | hack ) | as_op
+as_op => ( store | pub | once | const ) | bin_op
+bin_op => ( "+" | "-" | "/" | "%" | "*" | "^" | ">>" | "<<" | "|" | "&" | nip | swap ) | un_op
+un_op => ( "!" | neg | dup | pop ) | num
+
+ident => ALPHA <except _>+ (ALPHA | DIGIT)*

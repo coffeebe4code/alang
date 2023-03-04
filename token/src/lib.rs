@@ -2,6 +2,22 @@ use logos::Logos;
 
 #[derive(Logos, Clone, Debug, PartialEq)]
 pub enum Token {
+    // special operator symbols
+    #[token("dup")]
+    Dup,
+    #[token("hack")]
+    Hack,
+    #[token("swap")]
+    Swap,
+    #[token("rot")]
+    Rot,
+    #[token("pop")]
+    Pop,
+    #[token("nip")]
+    Nip,
+    #[token("neg")]
+    Neg,
+    // end special operator symbols
     #[token("let")]
     Let,
     #[token("const")]
@@ -96,16 +112,6 @@ pub enum Token {
     Not,
     #[token("=")]
     As,
-    #[token("~=")]
-    NotAs,
-    #[token("|=")]
-    OrAs,
-    #[token("^=")]
-    XorAs,
-    #[token("<<=")]
-    LShiftAs,
-    #[token(">>=")]
-    RShiftAs,
     #[token("&&")]
     AndLog,
     #[token("||")]
@@ -121,14 +127,11 @@ pub enum Token {
 
     #[regex("[a-zA-Z]+")]
     Symbol,
-    #[regex("[1-9][0-9]*|0")]
+    #[regex("[1-9][0-9]*\\.[0-9]+|0\\.[0-9]+|0|[1-9][0-9]*")]
     Num,
-    #[regex("[1-9][0-9]*.[0-9]+|0.[0-9]+")]
-    Decimal,
 
-    #[token("\n")]
-    NewLine,
-    #[regex(r"[ \t\r\f]+", logos::skip)]
+    #[regex(r"//.*", logos::skip)]
+    #[regex(r"[ \t\r\f\n]+", logos::skip)]
     #[error]
     Error,
 }
@@ -159,9 +162,26 @@ mod tests {
         let mut lexer1 = Token::lexer("5");
         let mut lexer2 = Token::lexer("50");
         let mut lexer3 = Token::lexer("0");
+        let mut lexer4 = Token::lexer("55");
         assert_eq!(lexer1.next(), Some(Token::Num));
         assert_eq!(lexer2.next(), Some(Token::Num));
         assert_eq!(lexer3.next(), Some(Token::Num));
+        assert_eq!(lexer4.next(), Some(Token::Num));
+    }
+    #[test]
+    fn it_skips_comments() {
+        let mut lexer1 = Token::lexer("5 //comment");
+        let mut lexer2 = Token::lexer(" //comment\n 2");
+        let mut lexer3 = Token::lexer("7 //comment\n");
+        let mut lexer4 = Token::lexer("7 / //comment\n 5");
+        assert_eq!(lexer1.next(), Some(Token::Num));
+        assert_eq!(lexer1.next(), None);
+        assert_eq!(lexer2.next(), Some(Token::Num));
+        assert_eq!(lexer3.next(), Some(Token::Num));
+        assert_eq!(lexer3.next(), None);
+        assert_eq!(lexer4.next(), Some(Token::Num));
+        assert_eq!(lexer4.next(), Some(Token::Div));
+        assert_eq!(lexer4.next(), Some(Token::Num));
     }
     #[test]
     fn it_tokenizes_decimals() {
@@ -173,16 +193,16 @@ mod tests {
         let mut lexer6 = Token::lexer("1.");
         let mut lexer7 = Token::lexer("01.2");
         let mut lexer8 = Token::lexer("1.00");
-        assert_eq!(lexer1.next(), Some(Token::Decimal));
-        assert_eq!(lexer2.next(), Some(Token::Decimal));
-        assert_eq!(lexer3.next(), Some(Token::Decimal));
-        assert_eq!(lexer4.next(), Some(Token::Decimal));
+        assert_eq!(lexer1.next(), Some(Token::Num));
+        assert_eq!(lexer2.next(), Some(Token::Num));
+        assert_eq!(lexer3.next(), Some(Token::Num));
+        assert_eq!(lexer4.next(), Some(Token::Num));
         assert_eq!(lexer5.next(), Some(Token::Dot));
         assert_eq!(lexer5.next(), Some(Token::Num));
         assert_eq!(lexer6.next(), Some(Token::Num));
         assert_eq!(lexer6.next(), Some(Token::Dot));
         assert_eq!(lexer7.next(), Some(Token::Num));
-        assert_eq!(lexer7.next(), Some(Token::Decimal));
-        assert_eq!(lexer8.next(), Some(Token::Decimal));
+        assert_eq!(lexer7.next(), Some(Token::Num));
+        assert_eq!(lexer8.next(), Some(Token::Num));
     }
 }
