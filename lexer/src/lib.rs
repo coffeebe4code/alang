@@ -1,9 +1,11 @@
 use logos::{Lexer, Logos};
+use std::ops::Range;
 use token::Token;
 
 #[derive(Debug, PartialEq)]
 pub struct Lexeme<'s> {
     pub slice: &'s str,
+    pub span: Range<usize>,
     pub token: Token,
 }
 
@@ -33,11 +35,11 @@ impl<'s> ALexer<'s> {
     }
     pub fn get_lexeme(&mut self) -> Lexeme<'s> {
         Lexeme {
+            span: self.lexer.span(),
             slice: self.lexer.slice(),
             token: self.collect_token(),
         }
     }
-
     pub fn collect_if(&mut self, token: Token) -> Option<Lexeme<'s>> {
         if self.peek()?.is_kind(token) {
             return Some(self.get_lexeme());
@@ -67,8 +69,27 @@ impl<'s> ALexer<'s> {
     pub fn is_num(&mut self) -> bool {
         self.check_if(Token::Num)
     }
+    pub fn is_chars(&mut self) -> bool {
+        self.check_if(Token::Chars)
+    }
     pub fn is_tri_op(&mut self) -> bool {
         self.check_of_if(&[Token::Rot, Token::Hack])
+    }
+    pub fn is_as_op(&mut self) -> bool {
+        self.check_of_if(&[
+            Token::Let,
+            Token::Pub,
+            Token::Once,
+            Token::Const,
+            Token::Trait,
+            Token::Xor,
+            Token::RShift,
+            Token::LShift,
+            Token::Or,
+            Token::And,
+            Token::Nip,
+            Token::Swap,
+        ])
     }
     pub fn is_bin_op(&mut self) -> bool {
         self.check_of_if(&[
@@ -82,6 +103,8 @@ impl<'s> ALexer<'s> {
             Token::LShift,
             Token::Or,
             Token::And,
+            Token::Nip,
+            Token::Swap,
         ])
     }
     pub fn is_un_op(&mut self) -> bool {

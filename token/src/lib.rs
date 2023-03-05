@@ -22,20 +22,38 @@ pub enum Token {
     Let,
     #[token("const")]
     Const,
+    #[token("pub")]
+    Pub,
     #[token("once")]
     Once,
     #[token("this")]
     This,
+    #[token("trait")]
+    Trait,
+    #[token("queue")]
+    Queue,
+    #[token("thread")]
+    Thread,
+    #[token("proc")]
+    Proc,
     #[token("undef")]
     Undef,
     #[token("for")]
     For,
+    #[token("break")]
+    Break,
     #[token("loop")]
     Loop,
     #[token("in")]
     In,
     #[token("of")]
     Of,
+    #[token("func")]
+    Func,
+    #[token("typeof")]
+    TypeOf,
+    #[token("obj")]
+    Object,
     #[token("enum")]
     Enum,
     #[token("list")]
@@ -44,8 +62,6 @@ pub enum Token {
     True,
     #[token("false")]
     False,
-    #[token("fn")]
-    Fun,
 
     #[token("(")]
     OParen,
@@ -124,7 +140,9 @@ pub enum Token {
     NotLog,
     #[token("%")]
     Mod,
-
+    #[regex(r#"'([^'\\]|\\t|\\u|\\n|\\')*'"#)]
+    #[regex(r#""([^"\\]|\\t|\\u|\\n|\\")*""#)]
+    Chars,
     #[regex("[a-zA-Z]+")]
     Symbol,
     #[regex("[1-9][0-9]*\\.[0-9]+|0\\.[0-9]+|0|[1-9][0-9]*")]
@@ -155,6 +173,19 @@ mod tests {
         assert_eq!(lexer.next(), Some(Token::Num));
         assert_eq!(lexer.next(), Some(Token::Symbol));
         assert_eq!(lexer.next(), Some(Token::Let));
+    }
+
+    #[test]
+    fn it_tokenizes_chars() {
+        let mut lexer = Token::lexer("\"5 x let\"");
+        let mut lexer2 = Token::lexer("'5 x let'");
+        let mut lexer3 = Token::lexer("\"5 \\\"x let\"");
+        assert_eq!(lexer.next(), Some(Token::Chars));
+        assert_eq!(lexer.slice(), "\"5 x let\"");
+        assert_eq!(lexer2.next(), Some(Token::Chars));
+        assert_eq!(lexer2.slice(), "'5 x let'");
+        assert_eq!(lexer3.next(), Some(Token::Chars));
+        assert_eq!(lexer3.slice(), "\"5 \\\"x let\"");
     }
 
     #[test]

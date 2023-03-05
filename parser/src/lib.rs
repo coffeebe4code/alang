@@ -17,6 +17,8 @@ impl<'s> Parser<'s> {
                 Some(_) => {
                     if self.lexer.is_num() {
                         stack.push(expr!(Number, self.lexer.collect_lexeme()));
+                    } else if self.lexer.is_chars() {
+                        program.push(expr!(Chars, self.lexer.collect_lexeme()));
                     } else if self.lexer.is_un_op() {
                         let right = stack.pop();
                         if right.is_none() {
@@ -50,7 +52,19 @@ impl<'s> Parser<'s> {
                             right.unwrap(),
                             self.lexer.collect_token(),
                         ));
-
+                    } else if self.lexer.is_as_op() {
+                        let var = stack.pop();
+                        let value = stack.pop();
+                        if var.is_none() || value.is_none() {
+                            panic!("stack underflow");
+                        }
+                        program.push(expr!(
+                            AsOp,
+                            value.unwrap(),
+                            var.unwrap(),
+                            self.lexer.collect_token(),
+                        ));
+                    } else {
                         panic!("not implemented");
                     }
                 }
@@ -79,6 +93,7 @@ mod tests {
                     Number,
                     Lexeme {
                         slice: "55",
+                        span: 0..2,
                         token: Token::Num
                     }
                 ),
@@ -86,6 +101,7 @@ mod tests {
                     Number,
                     Lexeme {
                         slice: "55",
+                        span: 3..5,
                         token: Token::Num
                     }
                 ),

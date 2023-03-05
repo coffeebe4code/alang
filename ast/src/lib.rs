@@ -5,6 +5,7 @@ use token::Token;
 pub enum Expr<'s> {
     TriOp(Box<Expr<'s>>, Box<Expr<'s>>, Box<Expr<'s>>, Token),
     BinOp(Box<Expr<'s>>, Box<Expr<'s>>, Token),
+    AsOp(Box<Expr<'s>>, Box<Expr<'s>>, Token),
     UnOp(Box<Expr<'s>>, Token),
     Number(Lexeme<'s>),
     Ident(Lexeme<'s>),
