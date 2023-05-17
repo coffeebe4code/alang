@@ -22,8 +22,9 @@ x a store
 # x is no longer available
 # dynamically sized content is moved
 
+
 # functions
-(5 + ) add5 store
+# a: int b: int # (5 + ) add5 store
 # (5 + ) is pushed onto the stack
 # add5 is pinned onto the stack
 # store will store the value (5 + )
@@ -81,4 +82,11 @@ foo2 (a) 100 +
 1000 foo; # undefined as only one argument supplied
 100 100 foo2; # 200 with an unused variable
 
-
+[1 2 3] (2 dup 0 !=) (idx 2 * [] swap push) loop
+# so then loop will start by
+# 2 2 0 != true
+# 2 idx
+# 1 2 *
+# 2 [] swap push
+# [] 2 push
+# [ 2 ]

@@ -83,7 +83,7 @@ mod tests {
     use lexer::Lexeme;
     use token::Token;
     #[test]
-    fn it_should_parse_num() {
+    fn it_should_parse_bin() {
         let mut parser = Parser::new(ALexer::new("55 55 +"));
         assert_eq!(
             parser.program().pop().unwrap(),

@@ -2,66 +2,18 @@ use logos::Logos;
 
 #[derive(Logos, Clone, Debug, PartialEq)]
 pub enum Token {
-    // special operator symbols
-    #[token("dup")]
-    Dup,
-    #[token("hack")]
-    Hack,
-    #[token("swap")]
-    Swap,
-    #[token("rot")]
-    Rot,
-    #[token("pop")]
-    Pop,
-    #[token("nip")]
-    Nip,
-    #[token("neg")]
-    Neg,
-    // end special operator symbols
-    #[token("let")]
-    Let,
-    #[token("const")]
-    Const,
-    #[token("pub")]
-    Pub,
-    #[token("once")]
-    Once,
-    #[token("this")]
-    This,
-    #[token("trait")]
-    Trait,
-    #[token("queue")]
-    Queue,
-    #[token("thread")]
-    Thread,
-    #[token("proc")]
-    Proc,
-    #[token("undef")]
-    Undef,
-    #[token("for")]
-    For,
-    #[token("break")]
-    Break,
-    #[token("loop")]
-    Loop,
     #[token("in")]
     In,
-    #[token("of")]
-    Of,
-    #[token("func")]
-    Func,
-    #[token("typeof")]
-    TypeOf,
-    #[token("obj")]
-    Object,
-    #[token("enum")]
-    Enum,
-    #[token("list")]
-    List,
-    #[token("true")]
-    True,
-    #[token("false")]
-    False,
+    #[token("out")]
+    Out,
+    #[token("inout")]
+    InOut,
+    #[token("lateout")]
+    LateOut,
+    #[token("inlateout")]
+    InLateOut,
+    #[token("inlateout")]
+    InLateOut,
 
     #[token("(")]
     OParen,

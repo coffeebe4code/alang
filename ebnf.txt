@@ -1,18 +1,31 @@
-program => ( num )* EOF
-num => digit+ ( "." DIGIT+ )? | string
-string => """ <any character or escpaed char>* """ | ident
-ident => ALPHA <except _>+ (ALPHA | DIGIT)*
-un_op => ( "!" | neg | dup | pop ) | num
-bin_op => ( "+" | "-" | "/" | "%" | "*" | "^" | ">>" | "<<" | "|" | "&" | nip | swap ) | un_op
-
-func =>  "(" args? ") | obj
-obj => "{" args? "}" | enum
-enum => "#" args? "#" | array
-array => [ top? ( "," top)* ] | lambda
-
-triple => ( rot | hack ) | as_op
-as_op => ( let | pub | once | const | trait ) | bin_op
-bin_op => ( "+" | "-" | "/" | "%" | "*" | "^" | ">>" | "<<" | "|" | "&" | "&&" | "||" | "==" | "!=" | nip | swap ) | un_op
-un_op => ( "!" | neg | dup | pop ) | num
-
-ident => ALPHA <except _>+ (ALPHA | DIGIT)*
+program = { directive | instruction } .
+directive = ( "%" | "." ) , identifier , [ operand ] .
+instruction = opcode , { operand } .
+pseudo = "DB" | "DW" | "DD" | "DQ | "DT" | "DDQ" | "DO" | "RESB" | "RESW" | "RESQ" | "RESDDQ" | "RESO" | "INCBIN" | "EQU" | "TIMES"
+operand = immediate | register | memory .
+immediate = "$" , ( decimal | hex ) .
+register = "EAX" | "EBX" | "ECX" | "EDX" | "ESP" | "EBP" | "ESI" | "EDI"
+         | "AX"  | "BX"  | "CX"  | "DX"  | "SP"  | "BP"  | "SI"  | "DI"
+         | "AL"  | "BL"  | "CL"  | "DL"  | "AH"  | "BH"  | "CH"  | "DH" .
+memory = [ segment ] , [ displacement ] , base , [ index , scale ] .
+segment = ( "BYTE" | "WORD" | "DWORD" | "QWORD" ) , "PTR" .
+displacement = [ "+" | "-" ] , immediate .
+base = "[" , register , "]" .
+index = "[" , register , "]" .
+scale = "*" , decimal .
+opcode = identifier .
+identifier = letter , { letter | digit | "_" } .
+decimal = digit , { digit } .
+hex = "0x" , hex-digit , { hex-digit } .
+letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J"
+       | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T"
+       | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d"
+       | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n"
+       | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x"
+       | "y" | "z" .
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" .
+hex-digit = digit | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c"
+          | "d" | "e" | "f" .
+label  =>  ( "?" | "." | "_" | "$" | letter ) , { letter | digit | "_" | "$" | "#" | "@" | "~" | "." | "?" } .
+prefix => "LOCK" | "REP" | "REPE" | "REPZ" | "REPNE" | "REPNZ" | "REX" | "CS" | "DS" | "ES" | "FS" | "GS" | "SS" | "ADDR16" | "ADDR32" | "ADDR64" | "DATA16" | "DATA32"
+operand_size_prefix => "A16" | "A32" | "016" | "032"
